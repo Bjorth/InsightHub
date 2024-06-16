@@ -17,11 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from reports.views import register_view, index_view
+from reports.views import register_view, index_view, create_report
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index_view, name='index'),
     path('register/', register_view, name='register'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('create/', create_report, name='create_report')
 ]
