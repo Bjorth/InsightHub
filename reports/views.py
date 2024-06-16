@@ -5,6 +5,9 @@ from .forms import RegisterForm
 
 # Create your views here.
 
+def index_view(request):
+    return render(request, 'index.html')
+
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
