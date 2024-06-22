@@ -5,7 +5,9 @@
     <h2 class="text-center">My Reports</h2>
     <ul class="list-group">
         {% for report in reports %}
-        <li class="list-group-item text-center">{{ report.title }} - {{ report.added }}</li>
+        <li class="list-group-item text-center">
+            <a href="{% url 'report_detail' report.id %}">{{ report.title }} - {{ report.added }}</a>
+        </li>
         {% empty %}
         <li class="list-group-item text-center">No reports available</li>
         {% endfor %}

@@ -59,6 +59,7 @@ def report_detail(request, report_id):
 @login_required
 def product_report_detail(request, product_report_id):
     product_report = get_object_or_404(ReportProduct, pk=product_report_id)
+    product_report.quantity_not_found = product_report.product.quantity_stock - product_report.quantity_found
     return render(request, 'report/product_report_detail.html', {'product_report': product_report})
 
 

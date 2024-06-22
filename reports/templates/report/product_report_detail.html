@@ -3,6 +3,9 @@
 {% block content %}
 <div class="container mt-4">
     <h2>Product Report {{ product_report.id }}</h2>
-    <p>Details: ...</p>
+    <p><strong>Product:</strong> {{ product_report.product.product_name }}</p>
+    <p><strong>Quantity Found:</strong> {{ product_report.quantity_found }}</p>
+    <p><strong>Quantity Not Found:</strong> {{ product_report.quantity_not_found }}</p>
+    <p><strong>Report:</strong> <a href="{% url 'report_detail' product_report.report.id %}">Report {{ product_report.report.id }}</a></p>
 </div>
 {% endblock %}
