@@ -10,14 +10,19 @@ class Report(models.Model):
         return f'Report {self.id} by {self.user.username}'
 
 class Product(models.Model):
-    sku = models.IntegerField()
+    sku = models.CharField(max_length=7)
     product_name = models.CharField(max_length=255)
     quantity_stock = models.IntegerField()
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     entry_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Product {self.product_name}'
+        return f'{self.sku} {self.product_name}'
+
+    def save(self, *args, **kwargs):
+        if not self.sku.startswith('0'):
+            self.sku = self.sku.zfill(7)
+        super(Product, self).save(*args, **kwargs)
 
 class ReportProduct(models.Model):
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
