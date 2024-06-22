@@ -39,13 +39,6 @@
         .table th, .table td {
             border-color: #444444;
         }
-        .btn-primary, .btn-warning, .btn-danger, .btn-secondary {
-            background-color: #555555;
-            border-color: #444444;
-        }
-        .btn-primary:hover, .btn-warning:hover, .btn-danger:hover, .btn-secondary:hover {
-            background-color: #666666;
-        }
         .dropdown-menu {
             background-color: #444444;
             color: #ffffff;
@@ -63,6 +56,30 @@
         }
         .list-group-item:hover {
             background-color: #555555;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        .btn-primary {
+            background-color: #3875d7;
+            border-color: #336bc7;
+        }
+        .btn-primary:hover{
+            background-color: #2d6cd7;
+            border-color: #2057b7;
         }
     </style>
 </head>
@@ -102,15 +119,17 @@
         <li class="nav-item">
             <form method="post" action="{% url 'logout' %}" class="form-inline">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-link nav-link">Logout</button>
+                <button type="submit" class="btn btn-danger nav-link">Logout</button>
             </form>
         </li>
         {% else %}
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'login' %}">Login</a>
+            <form method="post" action="{% url 'login' %}" class="form-inline">
+            <button type="submit" class="btn btn-success nav-link">Login</button>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'register' %}">Register</a>
+            <form method="post" action="{% url 'register' %}" class="form-inline">
+            <button type="submit" class="btn btn-primary nav-link">Register</button>
         </li>
         {% endif %}
     </div>
