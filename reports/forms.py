@@ -38,4 +38,7 @@ class ProductForm(forms.ModelForm):
 class ProductReportForm(forms.ModelForm):
     class Meta:
         model = ReportProduct
-        fields = ['report', 'product', 'quantity_found']
+        fields = ['product', 'quantity_found']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

@@ -25,9 +25,9 @@ class Product(models.Model):
         super(Product, self).save(*args, **kwargs)
 
 class ReportProduct(models.Model):
-    report = models.ForeignKey(Report, on_delete=models.CASCADE, null=False)
+    report = models.ForeignKey(Report, on_delete=models.CASCADE, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False, blank=False)
     quantity_found = models.IntegerField(null=False, blank=False)
 
     def __str__(self):
-        return f'ReportProduct {self.id} - Report {self.report.id} - Product {self.product.id}'
+        return f'Product Report {self.id} - Report {self.report.id}'
