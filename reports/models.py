@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # Create your models here.
 class Report(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
@@ -8,6 +9,7 @@ class Report(models.Model):
 
     def __str__(self):
         return f'Report {self.id} by {self.user.username}'
+
 
 class Product(models.Model):
     sku = models.CharField(max_length=7, null=False, blank=False)
@@ -23,6 +25,7 @@ class Product(models.Model):
         if not self.sku.startswith('0'):
             self.sku = self.sku.zfill(7)
         super(Product, self).save(*args, **kwargs)
+
 
 class ReportProduct(models.Model):
     report = models.ForeignKey(Report, on_delete=models.CASCADE, null=True, blank=True)

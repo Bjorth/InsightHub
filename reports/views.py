@@ -104,6 +104,10 @@ def product_delete(request, pk):
 @login_required
 def product_report_view(request):
     reports = ReportProduct.objects.all()
+
+    for report in reports:
+        report.quantity_not_found = report.product.quantity_stock - report.quantity_found
+
     return render(request, 'reports/product_report_view.html', {'reports': reports})
 
 
@@ -113,8 +117,6 @@ def product_report_create(request):
         form = ProductReportForm(request.POST)
         if form.is_valid():
             product_report = form.save(commit=False)
-            product_report.report = request.user.report_set.first()
-            product_report.save()
 
             report = Report.objects.filter(user=request.user).first()
             if not report:
@@ -122,6 +124,7 @@ def product_report_create(request):
 
             product_report.report = report
             product_report.save()
+
             return redirect('product_report_view')
     else:
         form = ProductReportForm()

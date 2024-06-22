@@ -15,6 +15,7 @@ class RegisterForm(UserCreationForm):
                   'password1',
                   'password2')
 
+
 class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
@@ -24,6 +25,7 @@ class ReportForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['user'].widget.attrs.update({'class': 'form-control'})
 
+
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
@@ -32,8 +34,9 @@ class ProductForm(forms.ModelForm):
     def clean_sku(self):
         sku = self.cleaned_data['sku']
         if not sku.startswith('0'):
-            sku = sku.zfill('7')
+            sku = sku.zfill(7)
         return sku
+
 
 class ProductReportForm(forms.ModelForm):
     class Meta:

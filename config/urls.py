@@ -22,8 +22,8 @@ from reports import views
 urlpatterns = [
     path('', views.index_view, name='index'),
     path('admin/', admin.site.urls),
-    path('register/', views.register_view, name='register'),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('register/', views.register_view, name='register'),
     path('products/', views.product_view, name='product_view'),
     path('products/create/', views.product_create, name='product_create'),
     path('products/update/<pk>', views.product_update, name='product_update'),

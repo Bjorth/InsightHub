@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">My Reports</h2>
+    <ul class="list-group">
+        {% for report in reports %}
+        <li class="list-group-item text-center">{{ report.title }} - {{ report.added }}</li>
+        {% empty %}
+        <li class="list-group-item text-center">No reports available</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

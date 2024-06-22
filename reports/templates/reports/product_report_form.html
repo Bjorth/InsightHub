@@ -2,11 +2,11 @@
 {% block title %}Create Product Report{% endblock %}
 {% block content %}
 <div class="container mt-4">
-  <h2>Create Product Report</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" class="btn btn-primary" value="Submit">
-  </form>
+    <h2>Create Product Report</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" class="btn btn-primary" value="Submit">
+    </form>
 </div>
 {% endblock %}

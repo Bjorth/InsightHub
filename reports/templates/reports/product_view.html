@@ -2,24 +2,24 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h2>Product List</h2>
+    <h2 class="text-center">Product List</h2>
     <a href="{% url 'product_create' %}" class="btn btn-primary mb-3">Create New Product</a>
     <table class="table">
         <thead>
         <tr>
-            <th>SKU</th>
-            <th>Product Name</th>
-            <th>Unit Price</th>
-            <th>Actions</th>
+            <th class="text-center">SKU</th>
+            <th class="text-center">Product Name</th>
+            <th class="text-center">Unit Price</th>
+            <th class="text-center">Actions</th>
         </tr>
         </thead>
         <tbody>
         {% for product in products %}
         <tr>
-            <td>{{ product.sku }}</td>
+            <td class="text-center">{{ product.sku }}</td>
             <td>{{ product.product_name }}</td>
-            <td>{{ product.unit_price }}</td>
-            <td>
+            <td class="text-center">{{ product.unit_price }}</td>
+            <td class="text-center">
                 <a href="{% url 'product_update' product.id %}" class="btn btn-warning">Edit</a>
                 <form method="post" action="{% url 'product_delete' product.id %}" style="display:inline;">
                     {% csrf_token %}
