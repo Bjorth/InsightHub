@@ -129,6 +129,10 @@ def product_report_create(request):
             product_report = form.save(commit=False)
             product_report.report = report
             product_report.save()
+
+            product_report.product.quantity_stock -= product_report.quantity_found
+            product_report.product.save()
+
             return redirect('product_report_view')
     else:
         form = ProductReportForm()
@@ -141,7 +145,13 @@ def product_report_update(request, pk):
     if request.method == 'POST':
         form = ProductReportForm(request.POST, instance=report)
         if form.is_valid():
-            form.save()
+            updated_report = form.save(commit=False)
+
+            difference = updated_report.quantity_found - report.quantity_found
+            report.product.quantity_stock -= difference
+            report.product.save()
+
+            updated_report.save()
             return redirect('product_report_view')
     else:
         form = ProductReportForm(instance=report)
@@ -152,6 +162,8 @@ def product_report_update(request, pk):
 def product_report_delete(request, pk):
     report = get_object_or_404(ReportProduct, pk=pk)
     if request.method == 'POST':
+        report.product.quantity_stock += report.quantity_found
+        report.product.save()
         report.delete()
         return redirect('product_report_view')
     return render(request, 'reports/product_report_delete_approve.html', {'report': report})

@@ -3,8 +3,7 @@
 {% block content %}
 <div class="container mt-4">
   <h2>Report {{ report.id }}</h2>
-  <p><strong>Title:</strong> {{ report.title }}</p>
-  <p><strong>Date Added:</strong> {{ report.added }}</p>
+  <p><strong>Date Added:</strong> {{ report.added|date:"d.m.Y" }}</p>
   <p><strong>User:</strong> {{ report.user.username }}</p>
 
   <h3>Product Reports:</h3>
