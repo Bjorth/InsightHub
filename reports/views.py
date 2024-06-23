@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.forms import formset_factory
 from django.db.models import Sum
 
-from .forms import RegisterForm, ReportForm, ProductForm, ProductReportForm
+from .forms import RegisterForm, ReportForm, ProductForm, ProductReportForm, ProductReportEditForm
 from .models import Product, ReportProduct, Report
 
 
@@ -139,21 +140,24 @@ def product_report_create(request):
             if not report:
                 report = Report.objects.create(user=request.user)
 
-            product_report = form.save(commit=False)
-            product_report.report = report
+            products = form.cleaned_data['products']
+            quantity_found = form.cleaned_data['quantity_found']
 
-            existing_reports = ReportProduct.objects.filter(product=product_report.product, report__user=request.user)
-            total_found = existing_reports.aggregate(total_found=Sum('quantity_found'))['total_found'] or 0
-
-            product_stock = product_report.product.quantity_stock
-            product_report.quantity_not_found = product_stock - total_found - product_report.quantity_found
-
-            product_report.save()
+            for product in products:
+                product_report = ReportProduct(
+                    report=report,
+                    product=product,
+                    quantity_found=quantity_found,
+                    quantity_not_found=product.quantity_stock - quantity_found
+                )
+                product_report.save()
 
             return redirect('product_report_view')
     else:
         form = ProductReportForm()
     return render(request, 'reports/product_report_form.html', {'form': form})
+
+
 
 @login_required
 def product_report_update(request, pk):
@@ -182,3 +186,42 @@ def product_report_delete(request, pk):
         report.delete()
         return redirect('product_report_view')
     return render(request, 'reports/product_report_delete_approve.html', {'report': report})
+
+@login_required
+def product_report_edit(request, product_report_id):
+    report = get_object_or_404(ReportProduct, pk=product_report_id)
+    if request.method == 'POST':
+        form = ProductReportEditForm(request.POST, instance=report)
+        if form.is_valid():
+            products = form.cleaned_data['products']
+            quantity_found = form.cleaned_data['quantity_found']
+
+            # Usuń stare raporty produktów dla tego raportu
+            ReportProduct.objects.filter(report=report.report).delete()
+
+            # Dodaj nowe raporty produktów
+            for product in products:
+                product_report = ReportProduct(
+                    report=report.report,
+                    product=product,
+                    quantity_found=quantity_found,
+                    quantity_not_found=product.quantity_stock - quantity_found
+                )
+                product_report.save()
+
+            return redirect('product_report_view')
+    else:
+        form = ProductReportEditForm(instance=report)
+    return render(request, 'reports/product_report_edit.html', {'form': form, 'report': report})
+
+@login_required
+def report_edit(request, report_id):
+    report = get_object_or_404(Report, pk=report_id)
+    if request.method == 'POST':
+        form = ReportForm(request.POST, instance=report)
+        if form.is_valid():
+            form.save()
+            return redirect('report_detail', report_id=report.id)
+    else:
+        form = ReportForm(instance=report)
+    return render(request, 'report/report_edit.html', {'form': form, 'report': report})

@@ -6,9 +6,10 @@ from django.contrib.auth.models import User
 class Report(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     added = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=255, default='Report')
 
     def __str__(self):
-        return f'Report {self.id} by {self.user.username}'
+        return self.title
 
 
 class Product(models.Model):

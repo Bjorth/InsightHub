@@ -19,7 +19,7 @@ class RegisterForm(UserCreationForm):
 class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = ('user',)
+        fields = ('title',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -40,9 +40,33 @@ class ProductForm(forms.ModelForm):
 
 
 class ProductReportForm(forms.ModelForm):
+    products = forms.ModelMultipleChoiceField(
+        queryset=Product.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+
     class Meta:
         model = ReportProduct
-        fields = ['product', 'quantity_found']
+        fields = ['products', 'quantity_found']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+class ProductReportEditForm(forms.ModelForm):
+    products = forms.ModelMultipleChoiceField(
+        queryset=Product.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+
+    class Meta:
+        model = ReportProduct
+        fields = ['products', 'quantity_found']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields['products'].initial = [self.instance.product]
+        self.fields.pop('product')
