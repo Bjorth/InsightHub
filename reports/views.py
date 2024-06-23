@@ -130,6 +130,7 @@ def product_report_view(request):
 
     return render(request, 'reports/product_report_view.html', {'reports': reports})
 
+
 @login_required
 def product_report_create(request):
     if request.method == 'POST':
@@ -156,7 +157,6 @@ def product_report_create(request):
     else:
         form = ProductReportForm()
     return render(request, 'reports/product_report_form.html', {'form': form})
-
 
 
 @login_required
@@ -187,6 +187,7 @@ def product_report_delete(request, pk):
         return redirect('product_report_view')
     return render(request, 'reports/product_report_delete_approve.html', {'report': report})
 
+
 @login_required
 def product_report_edit(request, product_report_id):
     report = get_object_or_404(ReportProduct, pk=product_report_id)
@@ -213,6 +214,7 @@ def product_report_edit(request, product_report_id):
     else:
         form = ProductReportEditForm(instance=report)
     return render(request, 'reports/product_report_edit.html', {'form': form, 'report': report})
+
 
 @login_required
 def report_edit(request, report_id):
