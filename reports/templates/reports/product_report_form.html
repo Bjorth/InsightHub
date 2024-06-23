@@ -6,6 +6,10 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
+        <p><strong>Product:</strong> {{ form.instance.product.product_name }}</p>
+        <p><strong>Quantity Stock:</strong> {{ form.instance.product.quantity_stock }}</p>
+        <p><strong>Quantity Found:</strong> {{ form.instance.quantity_found }}</p>
+        <p><strong>Quantity Not Found:</strong> {{ form.instance.quantity_not_found }}</p>
         <input type="submit" class="btn btn-primary" value="Submit">
     </form>
 </div>
