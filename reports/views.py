@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.db.models import Sum
 
 from .forms import RegisterForm, ReportForm, ProductForm, ProductReportForm
 from .models import Product, ReportProduct, Report
@@ -108,13 +109,25 @@ def product_delete(request, pk):
 
 @login_required
 def product_report_view(request):
-    reports = ReportProduct.objects.all()
+    reports = ReportProduct.objects.filter(report__user=request.user)
+
+    product_quantities_found = {}
 
     for report in reports:
-        report.quantity_not_found = report.product.quantity_stock - report.quantity_found
+        product_id = report.product.id
+        if product_id in product_quantities_found:
+            product_quantities_found[product_id] += report.quantity_found
+        else:
+            product_quantities_found[product_id] = report.quantity_found
+
+    for report in reports:
+        product_id = report.product.id
+        product_stock = report.product.quantity_stock
+        quantity_found = product_quantities_found.get(product_id, 0)
+        report.quantity_not_found = product_stock - quantity_found
+        report.save()
 
     return render(request, 'reports/product_report_view.html', {'reports': reports})
-
 
 @login_required
 def product_report_create(request):
@@ -129,8 +142,11 @@ def product_report_create(request):
             product_report = form.save(commit=False)
             product_report.report = report
 
+            existing_reports = ReportProduct.objects.filter(product=product_report.product, report__user=request.user)
+            total_found = existing_reports.aggregate(total_found=Sum('quantity_found'))['total_found'] or 0
+
             product_stock = product_report.product.quantity_stock
-            product_report.quantity_not_found = product_stock - product_report.quantity_found
+            product_report.quantity_not_found = product_stock - total_found - product_report.quantity_found
 
             product_report.save()
 
