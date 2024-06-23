@@ -22,7 +22,7 @@
             <td class="text-center">{{ report.product.product_name }}</td>
             <td class="text-center">{{ report.quantity_found }}</td>
             <td class="text-center">{{ report.quantity_not_found }}</td>
-            <td class="text-center">{{ report.report.added }}</td>
+            <td class="text-center">{{ report.report.added|date:"d-m-Y" }}</td>
             <td class="text-center">
                 <a href="{% url 'product_report_update' report.id %}" class="btn btn-success">Edit</a>
                 <form method="post" action="{% url 'product_report_delete' report.id %}" style="display:inline;">

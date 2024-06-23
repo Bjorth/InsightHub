@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 
 from .forms import RegisterForm, ReportForm, ProductForm, ProductReportForm
 from .models import Product, ReportProduct, Report
@@ -33,10 +34,13 @@ def create_report(request):
     if request.method == 'POST':
         form = ReportForm(request.POST)
         if form.is_valid():
-            report = form.save(commit=False)
-            report.user = request.user
-            report.save()
-            return redirect('index')
+            today = timezone.now().date()
+            existing_report = Report.objects.filter(user=request.user, added__date=today).first()
+            if not existing_report:
+                report = form.save(commit=False)
+                report.user = request.user
+                report.save()
+                return redirect('index')
     else:
         form = ReportForm()
     return render(request, 'reports/create_report.html', {'from': form})
@@ -117,19 +121,17 @@ def product_report_create(request):
     if request.method == 'POST':
         form = ProductReportForm(request.POST)
         if form.is_valid():
-            product_report = form.save(commit=False)
-
-            report = Report.objects.filter(user=request.user).first()
+            today = timezone.now().date()
+            report = Report.objects.filter(user=request.user, added__date=today).first()
             if not report:
                 report = Report.objects.create(user=request.user)
 
+            product_report = form.save(commit=False)
             product_report.report = report
             product_report.save()
-
             return redirect('product_report_view')
     else:
         form = ProductReportForm()
-
     return render(request, 'reports/product_report_form.html', {'form': form})
 
 

@@ -23,7 +23,8 @@ class ReportForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['user'].widget.attrs.update({'class': 'form-control'})
+        if 'user' in self.fields:
+            del self.fields['user']
 
 
 class ProductForm(forms.ModelForm):

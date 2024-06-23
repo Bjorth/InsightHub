@@ -6,7 +6,7 @@
     <ul class="list-group">
         {% for report in reports %}
         <li class="list-group-item text-center">
-            <a href="{% url 'report_detail' report.id %}">{{ report.title }} - {{ report.added }}</a>
+            <a href="{% url 'report_detail' report.id %}">Report {{ report.added|date:"d-m-Y" }}</a>
         </li>
         {% empty %}
         <li class="list-group-item text-center">No reports available</li>
