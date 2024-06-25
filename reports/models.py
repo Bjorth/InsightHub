@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-# Create your models here.
+# Report model for db
 class Report(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     added = models.DateTimeField(auto_now_add=True)
@@ -11,7 +11,7 @@ class Report(models.Model):
     def __str__(self):
         return self.title
 
-
+# Product model for db
 class Product(models.Model):
     sku = models.CharField(max_length=7, null=False, blank=False)
     product_name = models.CharField(max_length=255, null=False, blank=False)
@@ -27,7 +27,7 @@ class Product(models.Model):
             self.sku = self.sku.zfill(7)
         super(Product, self).save(*args, **kwargs)
 
-
+# Product Report for db
 class ReportProduct(models.Model):
     report = models.ForeignKey(Report, on_delete=models.CASCADE, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False, blank=False)
