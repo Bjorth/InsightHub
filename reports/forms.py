@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Report, ReportProduct, Product
 
 
+# Form for Registration below
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(max_length=254, required=True, help_text='Required. Please enter a valid email address')
 
@@ -15,15 +16,20 @@ class RegisterForm(UserCreationForm):
                   'password1',
                   'password2')
 
+
+# Form for Report below
 class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
-        fields = ('user',)
+        fields = ('title',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['user'].widget.attrs.update({'class': 'form-control'})
+        if 'user' in self.fields:
+            del self.fields['user']
 
+
+# Form for Product below
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
@@ -32,10 +38,33 @@ class ProductForm(forms.ModelForm):
     def clean_sku(self):
         sku = self.cleaned_data['sku']
         if not sku.startswith('0'):
-            sku = sku.zfill('7')
+            sku = sku.zfill(7)
         return sku
 
+
+# Form for Product Reports below
 class ProductReportForm(forms.ModelForm):
     class Meta:
         model = ReportProduct
-        fields = ['report', 'product', 'quantity_found']
+        fields = ['product', 'quantity_found']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class ProductReportEditForm(forms.ModelForm):
+    products = forms.ModelMultipleChoiceField(
+        queryset=Product.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=True
+    )
+
+    class Meta:
+        model = ReportProduct
+        fields = ['products', 'quantity_found']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields['products'].initial = [self.instance.product]
+
