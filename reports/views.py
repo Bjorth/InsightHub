@@ -95,7 +95,7 @@ def product_report_view(request):
         report.quantity_not_found = product_stock - quantity_found
         report.save()
 
-    return render(request, 'reports/product_report_view.html', {'reports': reports})
+    return render(request, 'product_report/product_report_view.html', {'reports': reports})
 
 
 @login_required
@@ -122,7 +122,7 @@ def product_report_create(request):
             return redirect('product_report_view')
     else:
         form = ProductReportForm()
-    return render(request, 'reports/product_report_form.html', {'form': form})
+    return render(request, 'product_report/product_report_form.html', {'form': form})
 
 
 @login_required
@@ -141,7 +141,7 @@ def product_report_update(request, pk):
             return redirect('product_report_view')
     else:
         form = ProductReportForm(instance=report)
-    return render(request, 'reports/product_report_form.html', {'form': form})
+    return render(request, 'product_report/product_report_form.html', {'form': form})
 
 
 @login_required
@@ -151,14 +151,14 @@ def product_report_delete(request, pk):
         report.product.save()
         report.delete()
         return redirect('product_report_view')
-    return render(request, 'reports/product_report_delete_approve.html', {'report': report})
+    return render(request, 'product_report/product_report_delete_approve.html', {'report': report})
 
 
 @login_required
 def product_report_detail(request, product_report_id):
     product_report = get_object_or_404(ReportProduct, pk=product_report_id)
     product_report.quantity_not_found = product_report.product.quantity_stock - product_report.quantity_found
-    return render(request, 'report/product_report_detail.html', {'product_report': product_report})
+    return render(request, 'product_report/product_report_detail.html', {'product_report': product_report})
 
 
 @login_required
@@ -184,7 +184,7 @@ def product_report_edit(request, product_report_id):
             return redirect('product_report_view')
     else:
         form = ProductReportEditForm(instance=report)
-    return render(request, 'reports/product_report_edit.html', {'form': form, 'report': report})
+    return render(request, 'product_report/product_report_edit.html', {'form': form, 'report': report})
 
 
 # Views to products below
