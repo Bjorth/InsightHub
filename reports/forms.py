@@ -67,4 +67,4 @@ class ProductReportEditForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
             self.fields['products'].initial = [self.instance.product]
-        self.fields.pop('product')
+
