@@ -191,7 +191,7 @@ def product_report_edit(request, product_report_id):
 @login_required
 def product_view(request):
     products = Product.objects.all()
-    return render(request, 'reports/product_view.html', {'products': products})
+    return render(request, 'product/product_view.html', {'products': products})
 
 
 @login_required
@@ -203,7 +203,7 @@ def product_create(request):
             return redirect('product_view')
     else:
         form = ProductForm()
-    return render(request, 'reports/product_form.html', {'form': form})
+    return render(request, 'product/product_form.html', {'form': form})
 
 
 @login_required
@@ -216,7 +216,7 @@ def product_update(request, pk):
             return redirect('product_view')
     else:
         form = ProductForm(instance=product)
-    return render(request, 'reports/product_form.html', {'form': form})
+    return render(request, 'product/product_form.html', {'form': form})
 
 
 def product_delete(request, pk):
@@ -224,7 +224,7 @@ def product_delete(request, pk):
     if request.method == 'POST':
         product.delete()
         return redirect('product_view')
-    return render(request, 'reports/product_delete_approve.html', {'product': product})
+    return render(request, 'product/product_delete_approve.html', {'product': product})
 
 
 # View to generate pdf report below
