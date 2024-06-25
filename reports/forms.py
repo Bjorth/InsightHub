@@ -40,15 +40,9 @@ class ProductForm(forms.ModelForm):
 
 
 class ProductReportForm(forms.ModelForm):
-    products = forms.ModelMultipleChoiceField(
-        queryset=Product.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        required=True
-    )
-
     class Meta:
         model = ReportProduct
-        fields = ['products', 'quantity_found']
+        fields = ['product', 'quantity_found']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.contrib.admin.views.decorators import staff_member_required
 
 from .forms import RegisterForm, ReportForm, ProductForm, ProductReportForm, ProductReportEditForm
 from .models import Product, ReportProduct, Report
@@ -139,17 +140,16 @@ def product_report_create(request):
             if not report:
                 report = Report.objects.create(user=request.user)
 
-            products = form.cleaned_data['products']
+            product = form.cleaned_data['product']
             quantity_found = form.cleaned_data['quantity_found']
 
-            for product in products:
-                product_report = ReportProduct(
-                    report=report,
-                    product=product,
-                    quantity_found=quantity_found,
-                    quantity_not_found=product.quantity_stock - quantity_found
-                )
-                product_report.save()
+            product_report = ReportProduct(
+                report=report,
+                product=product,
+                quantity_found=quantity_found,
+                quantity_not_found=product.quantity_stock - quantity_found
+            )
+            product_report.save()
 
             return redirect('product_report_view')
     else:
@@ -225,3 +225,14 @@ def report_edit(request, report_id):
     else:
         form = ReportForm(instance=report)
     return render(request, 'report/report_edit.html', {'form': form, 'report': report})
+
+
+@staff_member_required
+@login_required
+def report_delete(request, report_id):
+    report = get_object_or_404(Report, pk=report_id)
+    if request.method == 'POST':
+        report.delete()
+        return redirect('report_view')
+    return render(request, 'report/report_delete_approve.html', {'report': report})
+

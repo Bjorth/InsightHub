@@ -17,5 +17,9 @@
   </ul>
 
   <a href="{% url 'report_edit' report.id %}" class="btn btn-secondary mt-3">Edit Report</a>
+
+  {% if request.user.is_superuser %}
+  <a href="{% url 'report_delete' report.id %}" class="btn btn-danger mt-3">Delete Report</a>
+  {% endif %}
 </div>
 {% endblock %}
