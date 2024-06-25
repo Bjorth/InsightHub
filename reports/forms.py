@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Report, ReportProduct, Product
 
 
+# Form for Registration below
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(max_length=254, required=True, help_text='Required. Please enter a valid email address')
 
@@ -16,6 +17,7 @@ class RegisterForm(UserCreationForm):
                   'password2')
 
 
+# Form for Report below
 class ReportForm(forms.ModelForm):
     class Meta:
         model = Report
@@ -27,6 +29,7 @@ class ReportForm(forms.ModelForm):
             del self.fields['user']
 
 
+# Form for Product below
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
@@ -39,6 +42,7 @@ class ProductForm(forms.ModelForm):
         return sku
 
 
+# Form for Product Reports below
 class ProductReportForm(forms.ModelForm):
     class Meta:
         model = ReportProduct
