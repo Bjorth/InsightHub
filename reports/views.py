@@ -1,3 +1,8 @@
+import unicodedata
+
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
@@ -5,21 +10,16 @@ from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-
-import unicodedata
-
 from .forms import RegisterForm, ReportForm, ProductForm, ProductReportForm, ProductReportEditForm
 from .models import Product, ReportProduct, Report
 
 
-# Create your views here.
-
+# Main view below
 def index_view(request):
     return render(request, 'index.html')
 
 
+# Registration view below:
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -33,9 +33,10 @@ def register_view(request):
 
     else:
         form = RegisterForm()
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form})
 
 
+# Views to reports below
 @login_required
 def report_view(request):
     reports = Report.objects.filter(user=request.user)
@@ -51,51 +52,29 @@ def report_detail(request, report_id):
 
 
 @login_required
-def product_report_detail(request, product_report_id):
-    product_report = get_object_or_404(ReportProduct, pk=product_report_id)
-    product_report.quantity_not_found = product_report.product.quantity_stock - product_report.quantity_found
-    return render(request, 'report/product_report_detail.html', {'product_report': product_report})
-
-
-@login_required
-def product_view(request):
-    products = Product.objects.all()
-    return render(request, 'reports/product_view.html', {'products': products})
-
-
-@login_required
-def product_create(request):
+def report_edit(request, report_id):
+    report = get_object_or_404(Report, pk=report_id)
     if request.method == 'POST':
-        form = ProductForm(request.POST)
+        form = ReportForm(request.POST, instance=report)
         if form.is_valid():
             form.save()
-            return redirect('product_view')
+            return redirect('report_detail', report_id=report.id)
     else:
-        form = ProductForm()
-    return render(request, 'reports/product_form.html', {'form': form})
+        form = ReportForm(instance=report)
+    return render(request, 'report/report_edit.html', {'form': form, 'report': report})
 
 
+@staff_member_required
 @login_required
-def product_update(request, pk):
-    product = get_object_or_404(Product, pk=pk)
+def report_delete(request, report_id):
+    report = get_object_or_404(Report, pk=report_id)
     if request.method == 'POST':
-        form = ProductForm(request.POST, instance=product)
-        if form.is_valid():
-            form.save()
-            return redirect('product_view')
-    else:
-        form = ProductForm(instance=product)
-    return render(request, 'reports/product_form.html', {'form': form})
+        report.delete()
+        return redirect('report_view')
+    return render(request, 'report/report_delete_approve.html', {'report': report})
 
 
-def product_delete(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    if request.method == 'POST':
-        product.delete()
-        return redirect('product_view')
-    return render(request, 'reports/product_delete_approve.html', {'product': product})
-
-
+# Views to product reports below
 @login_required
 def product_report_view(request):
     reports = ReportProduct.objects.filter(report__user=request.user)
@@ -176,6 +155,13 @@ def product_report_delete(request, pk):
 
 
 @login_required
+def product_report_detail(request, product_report_id):
+    product_report = get_object_or_404(ReportProduct, pk=product_report_id)
+    product_report.quantity_not_found = product_report.product.quantity_stock - product_report.quantity_found
+    return render(request, 'report/product_report_detail.html', {'product_report': product_report})
+
+
+@login_required
 def product_report_edit(request, product_report_id):
     report = get_object_or_404(ReportProduct, pk=product_report_id)
     if request.method == 'POST':
@@ -184,10 +170,8 @@ def product_report_edit(request, product_report_id):
             products = form.cleaned_data['products']
             quantity_found = form.cleaned_data['quantity_found']
 
-            # Usuń stare raporty produktów dla tego raportu
             ReportProduct.objects.filter(report=report.report).delete()
 
-            # Dodaj nowe raporty produktów
             for product in products:
                 product_report = ReportProduct(
                     report=report.report,
@@ -203,29 +187,47 @@ def product_report_edit(request, product_report_id):
     return render(request, 'reports/product_report_edit.html', {'form': form, 'report': report})
 
 
+# Views to products below
 @login_required
-def report_edit(request, report_id):
-    report = get_object_or_404(Report, pk=report_id)
+def product_view(request):
+    products = Product.objects.all()
+    return render(request, 'reports/product_view.html', {'products': products})
+
+
+@login_required
+def product_create(request):
     if request.method == 'POST':
-        form = ReportForm(request.POST, instance=report)
+        form = ProductForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('report_detail', report_id=report.id)
+            return redirect('product_view')
     else:
-        form = ReportForm(instance=report)
-    return render(request, 'report/report_edit.html', {'form': form, 'report': report})
+        form = ProductForm()
+    return render(request, 'reports/product_form.html', {'form': form})
 
 
-@staff_member_required
 @login_required
-def report_delete(request, report_id):
-    report = get_object_or_404(Report, pk=report_id)
+def product_update(request, pk):
+    product = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
-        report.delete()
-        return redirect('report_view')
-    return render(request, 'report/report_delete_approve.html', {'report': report})
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect('product_view')
+    else:
+        form = ProductForm(instance=product)
+    return render(request, 'reports/product_form.html', {'form': form})
 
 
+def product_delete(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        product.delete()
+        return redirect('product_view')
+    return render(request, 'reports/product_delete_approve.html', {'product': product})
+
+
+# View to generate pdf report below
 @login_required
 def generate_pdf_report(request, report_id):
     report = get_object_or_404(Report, pk=report_id)
