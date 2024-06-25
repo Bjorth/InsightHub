@@ -3,10 +3,15 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
+from django.http import HttpResponse
+
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+
+import unicodedata
 
 from .forms import RegisterForm, ReportForm, ProductForm, ProductReportForm, ProductReportEditForm
 from .models import Product, ReportProduct, Report
-
 
 # Create your views here.
 
@@ -236,3 +241,55 @@ def report_delete(request, report_id):
         return redirect('report_view')
     return render(request, 'report/report_delete_approve.html', {'report': report})
 
+
+@login_required
+def generate_pdf_report(request, report_id):
+    report = get_object_or_404(Report, pk=report_id)
+    product_reports = ReportProduct.objects.filter(report=report)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="report_{report_id}.pdf"'
+
+    p = canvas.Canvas(response, pagesize=letter)
+    width, height = letter
+
+    p.setFont('Helvetica', 12)
+
+    margin_left = 50
+    margin_bottom = 50
+    margin_top = 50
+
+    y = height - margin_top
+
+    def normalize_text(text):
+        return unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('utf-8')
+
+    p.drawString(margin_left, y, f'Report Title: {normalize_text(report.title)}')
+    p.drawString(margin_left, y - 20, f'User: {normalize_text(report.user.username)}')
+    p.drawString(margin_left, y - 40, f"Date Added: {report.added.strftime('%d-%m-%Y')}")
+
+    p.drawString(margin_left, y - 60, 'Product Reports:')
+    p.line(margin_left, y - 65, margin_left + 200, y - 65)
+
+    line_height = 15
+
+    for product_report in product_reports:
+        product = product_report.product
+
+        y -= line_height * 4
+
+        if y < margin_bottom:
+            p.showPage()
+            p.setFont('Helvetica', 12)
+            y = height - margin_top - line_height
+
+        normalized_product_name = normalize_text(product.product_name)
+
+        p.drawString(margin_left + 20, y - 40, f'Product: {normalized_product_name}')
+        p.drawString(margin_left + 20, y - 60, f'Quantity Found: {product_report.quantity_found}')
+        p.drawString(margin_left + 20, y - 80, f'Quantity Not Found: {product_report.quantity_not_found}')
+        p.line(margin_left, y - 85, margin_left + 220, y - 85)
+
+    p.save()
+
+    return response

@@ -39,4 +39,5 @@ urlpatterns = [
     path('product_reports/<int:product_report_id>/edit/', views.product_report_edit, name='product_report_edit'),
     path('reports/<int:report_id>/edit/', views.report_edit, name='report_edit'),
     path('reports/<int:report_id>/delete/', views.report_delete, name='report_delete'),
+    path('reports/<int:report_id>/pdf/', views.generate_pdf_report, name='generate_pdf_report'),
 ]
