@@ -29,7 +29,7 @@ def register_view(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('core/index')
+            return redirect('index')
 
     else:
         form = RegisterForm()
@@ -143,7 +143,7 @@ def product_report_update(request, pk):
         form = ProductReportForm(instance=report)
     return render(request, 'product_report/product_report_form.html', {'form': form})
 
-
+@staff_member_required
 @login_required
 def product_report_delete(request, pk):
     report = get_object_or_404(ReportProduct, pk=pk)
@@ -193,7 +193,7 @@ def product_view(request):
     products = Product.objects.all()
     return render(request, 'product/product_view.html', {'products': products})
 
-
+@staff_member_required
 @login_required
 def product_create(request):
     if request.method == 'POST':
@@ -205,7 +205,7 @@ def product_create(request):
         form = ProductForm()
     return render(request, 'product/product_form.html', {'form': form})
 
-
+@staff_member_required
 @login_required
 def product_update(request, pk):
     product = get_object_or_404(Product, pk=pk)
@@ -218,7 +218,8 @@ def product_update(request, pk):
         form = ProductForm(instance=product)
     return render(request, 'product/product_form.html', {'form': form})
 
-
+@staff_member_required
+@login_required
 def product_delete(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
