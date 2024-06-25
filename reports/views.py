@@ -40,7 +40,7 @@ def register_view(request):
 @login_required
 def report_view(request):
     reports = Report.objects.filter(user=request.user)
-    return render(request, 'reports/report_view.html', {'reports': reports})
+    return render(request, 'report/report_view.html', {'reports': reports})
 
 
 @login_required
