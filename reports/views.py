@@ -13,6 +13,7 @@ import unicodedata
 from .forms import RegisterForm, ReportForm, ProductForm, ProductReportForm, ProductReportEditForm
 from .models import Product, ReportProduct, Report
 
+
 # Create your views here.
 
 def index_view(request):
@@ -33,23 +34,6 @@ def register_view(request):
     else:
         form = RegisterForm()
     return render(request, 'register.html', {'form': form})
-
-
-@login_required
-def create_report(request):
-    if request.method == 'POST':
-        form = ReportForm(request.POST)
-        if form.is_valid():
-            today = timezone.now().date()
-            existing_report = Report.objects.filter(user=request.user, added__date=today).first()
-            if not existing_report:
-                report = form.save(commit=False)
-                report.user = request.user
-                report.save()
-                return redirect('index')
-    else:
-        form = ReportForm()
-    return render(request, 'reports/create_report.html', {'from': form})
 
 
 @login_required

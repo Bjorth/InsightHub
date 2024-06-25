@@ -32,7 +32,6 @@ urlpatterns = [
     path('product_reports/create/', views.product_report_create, name='product_report_create'),
     path('product_reports/udpate/<pk>', views.product_report_update, name='product_report_update'),
     path('product_reports/delete/<pk>', views.product_report_delete, name='product_report_delete'),
-    path('reports/create/', views.create_report, name='create_report'),
     path('reports/view/', views.report_view, name='report_view'),
     path('reports/detail/<int:report_id>/', views.report_detail, name='report_detail'),
     path('product_reports/detail/<int:product_report_id>/', views.product_report_detail, name='product_report_detail'),
