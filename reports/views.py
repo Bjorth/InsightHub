@@ -16,7 +16,7 @@ from .models import Product, ReportProduct, Report
 
 # Main view below
 def index_view(request):
-    return render(request, 'index.html')
+    return render(request, 'core/index.html')
 
 
 # Registration view below:
@@ -29,7 +29,7 @@ def register_view(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('index')
+            return redirect('core/index')
 
     else:
         form = RegisterForm()
