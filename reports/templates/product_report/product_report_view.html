@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Product Report List</h2>
+    <a href="{% url 'product_report_create' %}" class="btn btn-primary mb-3">Create New Report</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="text-center">ID</th>
+            <th class="text-center">Product</th>
+            <th class="text-center">Quantity Found</th>
+            <th class="text-center">Quantity Not Found</th>
+            <th class="text-center">Entry Date</th>
+            <th class="text-center">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for report in reports %}
+        <tr>
+            <td class="text-center">{{ report.id }}</td>
+            <td class="text-center">{{ report.product.product_name }}</td>
+            <td class="text-center">{{ report.quantity_found }}</td>
+            <td class="text-center">{{ report.quantity_not_found }}</td>
+            <td class="text-center">{{ report.report.added|date:"d-m-Y" }}</td>
+            <td class="text-center">
+                <a href="{% url 'product_report_update' report.id %}" class="btn btn-success">Edit</a>
+                <form method="post" action="{% url 'product_report_delete' report.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
