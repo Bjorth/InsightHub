@@ -1,5 +1,3 @@
-import unicodedata
-
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
@@ -12,7 +10,7 @@ from django.http import HttpResponse
 
 from .forms import RegisterForm, ReportForm, ProductForm, ProductReportForm, ProductReportEditForm
 from .models import Product, ReportProduct, Report
-
+from .utility import normalize_text
 
 # Main view below
 def index_view(request):
@@ -247,9 +245,6 @@ def generate_pdf_report(request, report_id):
     margin_top = 50
 
     y = height - margin_top
-
-    def normalize_text(text):
-        return unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode('utf-8')
 
     p.drawString(margin_left, y, f'Report Title: {normalize_text(report.title)}')
     p.drawString(margin_left, y - 20, f'User: {normalize_text(report.user.username)}')
