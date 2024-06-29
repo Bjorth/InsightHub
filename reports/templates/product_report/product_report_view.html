@@ -25,7 +25,7 @@
             <td class="text-center">{{ report.report.added|date:"d-m-Y" }}</td>
             <td class="text-center">
                 <a href="{% url 'product_report_update' report.id %}" class="btn btn-success">Edit</a>
-                <form method="post" action="{% url 'product_report_delete' report.id %}" style="display:inline;">
+                <form method="get" action="{% url 'product_report_delete' report.id %}" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>

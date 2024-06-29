@@ -8,11 +8,16 @@
 
   <h3>Product Reports:</h3>
   <ul>
-    {% for product_report in product_reports %}
+    {% for product in report.products.all %}
+    {% for report_product in report.reportproduct_set.all %}
+    {% if report_product.product.id == product.id %}
     <li>
-      <a href="{% url 'product_report_detail' product_report.id %}">Product Report {{ product_report.id }}</a>
-      <a href="{% url 'product_report_edit' product_report.id %}" class="btn btn-secondary btn-sm ms-2">Edit</a>
+      {{ product.sku }} - {{ product.product_name }}
+      <a href="{% url 'product_report_detail' report_product.id %}" class="btn btn-secondary btn-sm ms-2">View Report</a>
+      <a href="{% url 'product_report_edit' report_product.id %}" class="btn btn-secondary btn-sm ms-2">Edit</a>
     </li>
+    {% endif %}
+    {% endfor %}
     {% endfor %}
   </ul>
 

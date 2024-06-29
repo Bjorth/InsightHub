@@ -23,7 +23,7 @@
             <td class="text-center">{{ product.unit_price }}</td>
             <td class="text-center">
                 <a href="{% url 'product_update' product.id %}" class="btn btn-success">Edit</a>
-                <form method="post" action="{% url 'product_delete' product.id %}" style="display:inline;">
+                <form method="get" action="{% url 'product_delete' product.id %}" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
