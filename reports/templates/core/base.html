@@ -150,13 +150,13 @@
         </li>
         {% else %}
         <li class="nav-item">
-            <form method="post" action="{% url 'login' %}" class="form-inline">
+            <form method="get" action="{% url 'login' %}" class="form-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-success nav-link">Login</button>
             </form>
         </li>
         <li class="nav-item">
-            <form method="post" action="{% url 'register' %}" class="form-inline">
+            <form method="get" action="{% url 'register' %}" class="form-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-primary nav-link">Register</button>
             </form>
