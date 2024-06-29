@@ -11,6 +11,7 @@ from .forms import ReportForm, ProductForm, ProductReportForm, ProductReportEdit
 from .models import Product, ReportProduct, Report
 from .utility import normalize_text
 
+
 # Main view below
 def index_view(request):
     return render(request, 'core/index.html')
@@ -57,22 +58,6 @@ def report_delete(request, report_id):
 def product_report_view(request):
     reports = ReportProduct.objects.filter(report__user=request.user)
 
-    product_quantities_found = {}
-
-    for report in reports:
-        product_id = report.product.id
-        if product_id in product_quantities_found:
-            product_quantities_found[product_id] += report.quantity_found
-        else:
-            product_quantities_found[product_id] = report.quantity_found
-
-    for report in reports:
-        product_id = report.product.id
-        product_stock = report.product.quantity_stock
-        quantity_found = product_quantities_found.get(product_id, 0)
-        report.quantity_not_found = product_stock - quantity_found
-        report.save()
-
     return render(request, 'product_report/product_report_view.html', {'reports': reports})
 
 
@@ -93,7 +78,6 @@ def product_report_create(request):
                 report=report,
                 product=product,
                 quantity_found=quantity_found,
-                quantity_not_found=product.quantity_stock - quantity_found
             )
             product_report.save()
 
@@ -120,6 +104,7 @@ def product_report_update(request, pk):
     else:
         form = ProductReportForm(instance=report)
     return render(request, 'product_report/product_report_form.html', {'form': form})
+
 
 @staff_member_required
 @login_required
@@ -171,6 +156,7 @@ def product_view(request):
     products = Product.objects.all()
     return render(request, 'product/product_view.html', {'products': products})
 
+
 @staff_member_required
 @login_required
 def product_create(request):
@@ -182,6 +168,7 @@ def product_create(request):
     else:
         form = ProductForm()
     return render(request, 'product/product_form.html', {'form': form})
+
 
 @staff_member_required
 @login_required
@@ -195,6 +182,7 @@ def product_update(request, pk):
     else:
         form = ProductForm(instance=product)
     return render(request, 'product/product_form.html', {'form': form})
+
 
 @staff_member_required
 @login_required

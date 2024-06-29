@@ -39,3 +39,12 @@ class ReportProduct(models.Model):
 
     def __str__(self):
         return f'Product Report {self.id} - Report {self.report.id}'
+
+    # Function to display Zero instead of None
+    def save(self, *args, **kwargs):
+        if self.quantity_found is not None and self.product.quantity_stock is not None:
+            self.quantity_not_found = self.product.quantity_stock - self.quantity_found
+        else:
+            self.quantity_not_found = None
+
+        super(ReportProduct, self).save(*args, **kwargs)
