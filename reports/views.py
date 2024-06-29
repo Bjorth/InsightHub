@@ -2,36 +2,18 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponse
 
-from .forms import RegisterForm, ReportForm, ProductForm, ProductReportForm, ProductReportEditForm
+from .forms import ReportForm, ProductForm, ProductReportForm, ProductReportEditForm
 from .models import Product, ReportProduct, Report
 from .utility import normalize_text
 
 # Main view below
 def index_view(request):
     return render(request, 'core/index.html')
-
-
-# Registration view below:
-def register_view(request):
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return redirect('index')
-
-    else:
-        form = RegisterForm()
-    return render(request, 'registration/register.html', {'form': form})
 
 
 # Views to reports below
