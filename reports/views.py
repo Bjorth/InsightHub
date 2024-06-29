@@ -26,9 +26,7 @@ def report_view(request):
 @login_required
 def report_detail(request, report_id):
     report = get_object_or_404(Report, pk=report_id)
-    product_reports = ReportProduct.objects.filter(report=report)
-    return render(request, 'report/report_detail.html',
-                  {'report': report, 'product_reports': product_reports})
+    return render(request, 'report/report_detail.html', {'report': report})
 
 
 @login_required
