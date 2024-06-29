@@ -221,12 +221,14 @@ def generate_pdf_report(request, report_id):
     p.drawString(margin_left, y - 60, 'Product Reports:')
     p.line(margin_left, y - 65, margin_left + 200, y - 65)
 
-    line_height = 15
+    line_height = 18
+
+    total_products_sum = 0
 
     for product_report in product_reports:
         product = product_report.product
 
-        y -= line_height * 4
+        y -= line_height * 5
 
         if y < margin_bottom:
             p.showPage()
@@ -234,12 +236,16 @@ def generate_pdf_report(request, report_id):
             y = height - margin_top - line_height
 
         normalized_product_name = normalize_text(product.product_name)
-
+        total_product_value = product_report.quantity_found * product.unit_price
         p.drawString(margin_left + 20, y - 40, f'Product: {normalized_product_name}')
         p.drawString(margin_left + 20, y - 60, f'Quantity Found: {product_report.quantity_found}')
         p.drawString(margin_left + 20, y - 80, f'Quantity Not Found: {product_report.quantity_not_found}')
-        p.line(margin_left, y - 85, margin_left + 220, y - 85)
+        p.drawString(margin_left + 20, y - 100, f'Total Product Value: {total_product_value} PLN')
+        p.line(margin_left, y - 105, margin_left + 300, y - 105)
 
+        total_products_sum += total_product_value
+
+    p.drawString(margin_left, margin_bottom, f'Total Products Value: {total_products_sum} PLN')
     p.save()
 
     return response
