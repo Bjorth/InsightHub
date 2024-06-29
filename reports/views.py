@@ -1,5 +1,6 @@
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -11,6 +12,7 @@ from .forms import ReportForm, ProductForm, ProductReportForm, ProductReportEdit
 from .models import Product, ReportProduct, Report
 from .utility import normalize_text
 
+import os
 
 # Main view below
 def index_view(request):
@@ -206,6 +208,11 @@ def generate_pdf_report(request, report_id):
     p = canvas.Canvas(response, pagesize=letter)
     width, height = letter
 
+    icon_path = 'reports/static/favicon-192x192.png'
+    if os.path.exists(icon_path):
+        img = ImageReader(icon_path)
+        p.drawImage(img, 50, height - 50, width=50, height=50, mask='auto')
+
     p.setFont('Helvetica', 12)
 
     margin_left = 50
@@ -214,12 +221,12 @@ def generate_pdf_report(request, report_id):
 
     y = height - margin_top
 
-    p.drawString(margin_left, y, f'Report Title: {normalize_text(report.title)}')
-    p.drawString(margin_left, y - 20, f'User: {normalize_text(report.user.username)}')
-    p.drawString(margin_left, y - 40, f"Date Added: {report.added.strftime('%d-%m-%Y')}")
+    p.drawString(margin_left, y - 50, f'Report Title: {normalize_text(report.title)}')
+    p.drawString(margin_left, y - 70, f'User: {normalize_text(report.user.username)}')
+    p.drawString(margin_left, y - 90, f"Date Added: {report.added.strftime('%d-%m-%Y')}")
 
-    p.drawString(margin_left, y - 60, 'Product Reports:')
-    p.line(margin_left, y - 65, margin_left + 200, y - 65)
+    p.drawString(margin_left, y - 110, 'Product Reports:')
+    p.line(margin_left, y - 115, margin_left + 250, y - 115)
 
     line_height = 18
 
@@ -237,11 +244,11 @@ def generate_pdf_report(request, report_id):
 
         normalized_product_name = normalize_text(product.product_name)
         total_product_value = product_report.quantity_found * product.unit_price
-        p.drawString(margin_left + 20, y - 40, f'Product: {normalized_product_name}')
-        p.drawString(margin_left + 20, y - 60, f'Quantity Found: {product_report.quantity_found}')
-        p.drawString(margin_left + 20, y - 80, f'Quantity Not Found: {product_report.quantity_not_found}')
-        p.drawString(margin_left + 20, y - 100, f'Total Product Value: {total_product_value} PLN')
-        p.line(margin_left, y - 105, margin_left + 300, y - 105)
+        p.drawString(margin_left + 20, y - 50, f'Product: {normalized_product_name}')
+        p.drawString(margin_left + 20, y - 70, f'Quantity Found: {product_report.quantity_found}')
+        p.drawString(margin_left + 20, y - 90, f'Quantity Not Found: {product_report.quantity_not_found}')
+        p.drawString(margin_left + 20, y - 110, f'Total Product Value: {total_product_value} PLN')
+        p.line(margin_left, y - 115, margin_left + 310, y - 115)
 
         total_products_sum += total_product_value
 
