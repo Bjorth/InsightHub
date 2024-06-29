@@ -23,11 +23,6 @@ class ReportForm(forms.ModelForm):
         model = Report
         fields = ('title',)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if 'user' in self.fields:
-            del self.fields['user']
-
 
 # Form for Product below
 class ProductForm(forms.ModelForm):
@@ -67,4 +62,3 @@ class ProductReportEditForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
             self.fields['products'].initial = [self.instance.product]
-
