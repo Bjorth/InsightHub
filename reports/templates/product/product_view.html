@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Product List</h2>
+    <a href="{% url 'product_create' %}" class="btn btn-primary mb-3">Create New Product</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="text-center">SKU</th>
+            <th class="text-center">Product Name</th>
+            <th class="text-center">Quantity Stock</th>
+            <th class="text-center">Unit Price</th>
+            <th class="text-center">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+        <tr>
+            <td class="text-center">{{ product.sku }}</td>
+            <td class="text-center">{{ product.product_name }}</td>
+            <td class="text-center">{{ product.quantity_stock }}</td>
+            <td class="text-center">{{ product.unit_price }}</td>
+            <td class="text-center">
+                <a href="{% url 'product_update' product.id %}" class="btn btn-success">Edit</a>
+                <form method="post" action="{% url 'product_delete' product.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
